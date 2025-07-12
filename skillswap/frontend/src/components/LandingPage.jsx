@@ -77,23 +77,8 @@ const LandingPage = () => {
             </Link>
           </div>
         </div>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="rounded-3xl shadow-[0_0_30px_rgba(138,99,247,0.25)]"
-          style={{
-            backdropFilter: "blur(16px)",
-            background: "rgba(255, 255, 255, 0.05)",
-            border: "1px solid rgba(255,255,255,0.12)",
-          }}
-        >
-          <img
-            src="/swap-illustration.svg"
-            alt="Skill Swap Illustration"
-            className="rounded-3xl w-full"
-          />
-        </motion.div>
+
+       
       </div>
 
       {/* Search Skills - Glass Card */}
@@ -190,7 +175,7 @@ const LandingPage = () => {
 
       {/* Footer */}
       <footer className="text-center text-[#A0A3B1] text-sm mt-16 mb-6">
-        © 2025 SkillSwap — Built with ❤️
+        © 2025 SkillSwap — Built by ELEEts
       </footer>
 
       {/* Gradient animation CSS */}

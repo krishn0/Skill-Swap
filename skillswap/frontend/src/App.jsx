@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./components/layout/Navbar";
 import LandingPage from "./components/LandingPage";
@@ -12,19 +12,28 @@ import BrowseSkills from "./components/BrowseSkills";
 import Browse from "./pages/Browse";
 import MySwaps from "./pages/MySwaps";
 import SwapRequest from "./pages/SwapRequest";
+import OwnProfile from "./pages/OwnProfile";
+import Profile from "./pages/Profile";
 
-// Profile pages
-import OwnProfile from "./pages/OwnProfile";   // your own profile page
-import Profile from "./pages/Profile";         // browsed user's profile page
+function Layout({ children }) {
+  const location = useLocation();
+
+  // Hide navbar on landing page and auth pages if you want
+  const hideNavbarOnPaths = ["/", "/login", "/signup"];
+
+  return (
+    <>
+      {/* Conditionally render navbar */}
+      {!hideNavbarOnPaths.includes(location.pathname) && <Navbar />}
+      <main>{children}</main>
+    </>
+  );
+}
 
 function App() {
   return (
     <Router>
-      <header>
-        <Navbar />
-      </header>
-
-      <main>
+      <Layout>
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
@@ -39,14 +48,15 @@ function App() {
           <Route path="/swap-request" element={<SwapRequest />} />
 
           {/* Profile routes */}
-          <Route path="/profile" element={<OwnProfile />} />        {/* own logged-in user profile */}
-          <Route path="/profile/:id" element={<Profile />} />       {/* other user's public profile */}
+          <Route path="/profile" element={<OwnProfile />} />
+          <Route path="/profile/:id" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/notifications" element={<Notifications />} />
+
           {/* Catch-all 404 */}
           <Route path="*" element={<h2 className="p-6 text-2xl">404 - Page Not Found</h2>} />
         </Routes>
-      </main>
+      </Layout>
     </Router>
   );
 }

@@ -12,22 +12,25 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#6C63FF] to-[#FF6584] flex items-center justify-center px-4 py-12 font-inter">
+    <div
+      className="min-h-screen bg-[#0E0E1C] flex items-center justify-center px-6 py-12 font-inter text-white"
+      style={{ fontFeatureSettings: "'liga' off" }}
+    >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="backdrop-blur-[10px] bg-white/30 border border-[#E4E6F1] rounded-2xl shadow-lg max-w-md w-full p-10"
-        style={{ boxShadow: "inset 0 0 10px #ffffff80" }} // soft inner shadow
+        className="backdrop-blur-[16px] bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.12)] rounded-3xl shadow-[0_0_30px_rgba(138,99,247,0.15)] max-w-md w-full p-10"
+        style={{ boxShadow: "inset 0 0 15px rgba(255,255,255,0.1)" }} // soft inner glow
       >
         <h2
-          className="text-4xl font-poppins font-bold text-[#2E2E48] mb-4 tracking-tight"
+          className="text-4xl font-poppins font-bold text-white mb-4 tracking-tight"
           style={{ letterSpacing: "-0.02em" }}
         >
           Welcome Back 👋
         </h2>
         <p
-          className="text-[#6B6B8F] mb-10 text-base"
+          className="text-[#A0A3B1] mb-10 text-base"
           style={{ letterSpacing: "-0.01em" }}
         >
           Login to your SkillSwap account
@@ -37,14 +40,14 @@ const Login = () => {
           <div>
             <label
               htmlFor="email"
-              className="block mb-2 font-semibold text-[#2E2E48]"
+              className="block mb-2 font-semibold text-white"
             >
               Email
             </label>
             <input
               id="email"
               type="email"
-              className="w-full rounded-xl border border-[#E4E6F1] bg-white/70 px-5 py-3 text-[#2E2E48] placeholder-[#6B6B8F] focus:outline-none focus:ring-2 focus:ring-[#00C9A7] transition"
+              className="w-full rounded-2xl bg-transparent border border-[rgba(255,255,255,0.12)] px-5 py-3 text-white placeholder-[#A0A3B1] focus:outline-none focus:ring-2 focus:ring-[#00D4FF] transition"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -57,14 +60,14 @@ const Login = () => {
           <div>
             <label
               htmlFor="password"
-              className="block mb-2 font-semibold text-[#2E2E48]"
+              className="block mb-2 font-semibold text-white"
             >
               Password
             </label>
             <input
               id="password"
               type="password"
-              className="w-full rounded-xl border border-[#E4E6F1] bg-white/70 px-5 py-3 text-[#2E2E48] placeholder-[#6B6B8F] focus:outline-none focus:ring-2 focus:ring-[#00C9A7] transition"
+              className="w-full rounded-2xl bg-transparent border border-[rgba(255,255,255,0.12)] px-5 py-3 text-white placeholder-[#A0A3B1] focus:outline-none focus:ring-2 focus:ring-[#00D4FF] transition"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -75,10 +78,10 @@ const Login = () => {
           </div>
 
           <motion.button
-            whileHover={{ scale: 1.05, boxShadow: "0 0 15px #6C63FF" }}
+            whileHover={{ scale: 1.05, boxShadow: "0 0 15px #8A63F7" }}
             whileTap={{ scale: 0.95 }}
             type="submit"
-            className="w-full rounded-2xl bg-gradient-to-r from-[#6C63FF] via-[#FF6584] to-[#FF6584] py-3 text-white font-semibold tracking-wide shadow-lg"
+            className="w-full rounded-3xl bg-gradient-to-r from-[#8A63F7] via-[#FF4F81] to-[#FF4F81] py-3 text-white font-semibold tracking-wide shadow-lg"
             style={{ letterSpacing: "-0.01em" }}
           >
             Sign In
@@ -86,13 +89,13 @@ const Login = () => {
         </form>
 
         <p
-          className="text-center text-[#6B6B8F] mt-8 text-sm"
+          className="text-center text-[#A0A3B1] mt-8 text-sm"
           style={{ letterSpacing: "-0.01em" }}
         >
           Don’t have an account?{" "}
           <Link
             to="/signup"
-            className="text-[#FF6584] font-semibold hover:underline"
+            className="text-[#FF4F81] font-semibold hover:underline"
           >
             Create one
           </Link>
@@ -100,7 +103,7 @@ const Login = () => {
 
         <Link
           to="/"
-          className="block mt-5 text-center text-xs text-[#6B6B8F] hover:text-[#00C9A7] hover:underline transition"
+          className="block mt-5 text-center text-xs text-[#A0A3B1] hover:text-[#00D4FF] hover:underline transition"
         >
           ← Back to Landing
         </Link>
