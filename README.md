@@ -4,9 +4,6 @@ Skill-Swap is a full-stack, peer-to-peer skill exchange platform where users can
 Built with React, Node.js, Express, MongoDB, and styled using Tailwind CSS.
 
 📦 Project Structure
-plaintext
-Copy
-Edit
 skillswap/
 ├── backend/
 │   ├── controllers/
@@ -17,15 +14,16 @@ skillswap/
 │   ├── .env
 │   ├── index.js
 │   └── package.json
-└── frontend/
-    ├── src/
-    ├── public/
-    ├── .eslintrc.cjs
-    ├── index.html
-    ├── package.json
-    ├── postcss.config.js
-    ├── tailwind.config.js
-    └── vite.config.js
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   ├── .eslintrc.cjs
+│   ├── index.html
+│   ├── package.json
+│   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   └── vite.config.js
+
 ✨ Features
 👤 User Authentication
 JWT-based signup and login
