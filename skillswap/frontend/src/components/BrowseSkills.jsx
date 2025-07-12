@@ -4,6 +4,7 @@ import Sidebar from "./layout/Sidebar";
 import Button from "./ui/Button";
 import ProfileCard from "./profile/ProfileCard";
 import axios from "axios";
+import { motion } from "framer-motion";
 
 const categories = ["Design", "Music", "Coding", "Languages"];
 const availabilityOptions = ["Weekends", "Evenings", "Mornings"];
@@ -60,15 +61,27 @@ const BrowseSkills = () => {
   });
 
   return (
+<<<<<<< HEAD
     <div className="flex min-h-screen bg-[#0E0E1C] text-white font-manrope">
       {/* Sidebar */}
       <aside className="fixed top-0 left-0 h-full w-64 p-4">
+=======
+    <motion.div
+      className="flex min-h-screen bg-[#0E0E1C] text-white font-['Inter']"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
+      {/* Sidebar */}
+      <aside className="fixed top-0 left-0 h-full w-64 bg-[rgba(255,255,255,0.05)] backdrop-blur-xl border-r border-[rgba(255,255,255,0.12)] rounded-tr-3xl rounded-br-3xl shadow-[0_0_30px_rgba(138,99,247,0.1)] z-30">
+>>>>>>> 94216af75fe69b13efd5371ef2b807dad9cbf575
         <Sidebar />
       </aside>
 
       {/* Main content container */}
       <div className="flex flex-col flex-1 ml-64 min-h-screen">
         {/* Navbar */}
+<<<<<<< HEAD
         <header className="fixed top-0 left-64 right-0 z-40">
           <Navbar />
         </header>
@@ -77,6 +90,28 @@ const BrowseSkills = () => {
         <main className="pt-24 px-6 md:px-10 max-w-7xl mx-auto w-full">
           <h1 className="text-4xl font-bold text-[#8A63F7] mb-2">Browse Skills</h1>
           <p className="text-[#A0A3B1] mb-8">Find people offering the skills you need and request a swap!</p>
+=======
+        <header className="fixed top-0 left-64 right-0 h-16 bg-[rgba(255,255,255,0.05)] backdrop-blur-xl border-b border-[rgba(255,255,255,0.12)] shadow z-40 flex items-center px-6">
+          <Navbar />
+        </header>
+
+        {/* Main scrollable content */}
+        <main
+          className="pt-20 px-6 md:px-10 flex-1 overflow-auto max-w-7xl mx-auto"
+          style={{ minHeight: "calc(100vh - 64px)" }}
+        >
+          <motion.h1
+            className="text-4xl font-bold text-[#8A63F7] mb-2"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            Browse Skills
+          </motion.h1>
+          <p className="text-[#A0A3B1] mb-8">
+            Find people offering the skills you need and request a swap!
+          </p>
+>>>>>>> 94216af75fe69b13efd5371ef2b807dad9cbf575
 
           {/* Search Bar */}
           <div className="mb-6">
@@ -85,11 +120,16 @@ const BrowseSkills = () => {
               placeholder="Search skills or users..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+<<<<<<< HEAD
               className="w-full text-white placeholder-[#A0A3B1] bg-[#1A1A2E] rounded-2xl border border-white/10 px-6 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-[#8A63F7] transition"
+=======
+              className="w-full text-white placeholder-[#A0A3B1] bg-[rgba(255,255,255,0.05)] backdrop-blur-lg border border-[rgba(255,255,255,0.12)] rounded-2xl px-6 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-[#8A63F7] transition"
+>>>>>>> 94216af75fe69b13efd5371ef2b807dad9cbf575
             />
           </div>
 
           {/* Filters */}
+<<<<<<< HEAD
           <div className="rounded-2xl p-5 mb-10 bg-[rgba(255,255,255,0.05)] backdrop-blur-md border border-white/10 shadow-md flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0">
             {/* Skill Category */}
             <div className="flex flex-col md:flex-row md:items-center md:space-x-2 min-w-[160px]">
@@ -154,20 +194,52 @@ const BrowseSkills = () => {
                 Reset Filters
               </Button>
             </div>
+=======
+          <div className="bg-[rgba(255,255,255,0.05)] backdrop-blur-lg rounded-2xl border border-[rgba(255,255,255,0.12)] shadow-[0_0_30px_rgba(138,99,247,0.1)] p-4 mb-8 flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0">
+            {/* Filter sections remain unchanged */}
+            {/* ... */}
+>>>>>>> 94216af75fe69b13efd5371ef2b807dad9cbf575
           </div>
 
           {/* User Cards */}
           {filteredUsers.length === 0 ? (
             <p className="text-[#888] text-center">No users found for selected filters.</p>
           ) : (
+<<<<<<< HEAD
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+=======
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-3 gap-6"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: 0.1
+                  }
+                }
+              }}
+            >
+>>>>>>> 94216af75fe69b13efd5371ef2b807dad9cbf575
               {filteredUsers.map((user) => (
-                <ProfileCard key={user._id} user={user} />
+                <motion.div
+                  key={user._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <ProfileCard user={user} />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
 
+<<<<<<< HEAD
           {/* Load More */}
+=======
+          {/* Load More Button */}
+>>>>>>> 94216af75fe69b13efd5371ef2b807dad9cbf575
           <div className="flex justify-center mt-10">
             <Button variant="outline" className="text-[#A0A3B1] border-[#A0A3B1] hover:bg-[#2a2a3d]">
               Load More
@@ -175,7 +247,7 @@ const BrowseSkills = () => {
           </div>
         </main>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

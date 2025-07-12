@@ -18,8 +18,19 @@ const GirlCharacterWithFrockAndDialog = ({ dialogue = "Hello! I'm talking." }) =
   }, [controls]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-pink-50 space-y-4">
-      <div className="relative">
+    <motion.div
+      className="flex flex-col items-center justify-center min-h-screen bg-[#0E0E1C] text-white font-['Inter'] p-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
+      <motion.div
+        className="relative backdrop-blur-xl bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.12)] rounded-3xl p-8 shadow-[0_0_30px_rgba(138,99,247,0.1)]"
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        whileHover={{ scale: 1.03, boxShadow: "0 0 8px #8A63F7" }}
+      >
         <svg
           width="250"
           height="350"
@@ -31,9 +42,7 @@ const GirlCharacterWithFrockAndDialog = ({ dialogue = "Hello! I'm talking." }) =
             const angle = (Math.PI * 2 * i) / 14;
             const x = 100 + Math.cos(angle) * 50;
             const y = 80 + Math.sin(angle) * 50;
-            return (
-              <circle key={i} cx={x} cy={y} r="12" fill="#4B3832" />
-            );
+            return <circle key={i} cx={x} cy={y} r="12" fill="#4B3832" />;
           })}
 
           {/* Face */}
@@ -55,7 +64,7 @@ const GirlCharacterWithFrockAndDialog = ({ dialogue = "Hello! I'm talking." }) =
           {/* Frock */}
           <path
             d="M70 130 L130 130 Q140 200 60 200 Z"
-            fill="#FF8FAB"
+            fill="#FF4F81"
             stroke="#333"
             strokeWidth="2"
           />
@@ -70,12 +79,17 @@ const GirlCharacterWithFrockAndDialog = ({ dialogue = "Hello! I'm talking." }) =
         </svg>
 
         {/* Dialogue Box */}
-        <div className="absolute -top-8 -right-40 w-48 bg-white border border-gray-400 rounded-lg p-3 shadow-lg text-sm">
+        <motion.div
+          className="absolute -top-12 -right-48 w-56 bg-[rgba(255,255,255,0.05)] border border-[rgba(255,255,255,0.12)] rounded-2xl p-4 shadow-lg text-sm text-white backdrop-blur-xl"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
           <div className="mb-2">{dialogue}</div>
-          <div className="absolute -left-3 top-4 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-white"></div>
-        </div>
-      </div>
-    </div>
+          <div className="absolute -left-3 top-4 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-[rgba(255,255,255,0.05)]"></div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 };
 
