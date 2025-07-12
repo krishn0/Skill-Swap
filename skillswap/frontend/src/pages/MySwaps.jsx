@@ -1,216 +1,244 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/layout/Navbar";
 import Sidebar from "../components/layout/Sidebar";
 import SwapList from "../components/swap/SwapList";
 
-const initialSwaps = {
-  incomingRequests: [
-    {
-      id: 1,
-      partnerName: "John Doe",
-      location: "Mumbai",
-      skillOffered: "Guitar Lessons",
-      skillRequested: "Spanish Speaking",
-      dateRequested: "2025-07-10",
-      availability: "Weekends",
-      status: "pending",
-    },
-  ],
-  outgoingRequests: [
-    {
-      id: 2,
-      partnerName: "Priya Singh",
-      location: "Delhi",
-      skillOffered: "Cooking",
-      skillRequested: "ReactJS",
-      dateRequested: "2025-07-08",
-      availability: "Evenings",
-      status: "pending",
-    },
-  ],
-  ongoingSwaps: [
-    {
-      id: 3,
-      partnerName: "Jane Doe",
-      location: "Pune",
-      skillOffered: "Cooking Lessons",
-      skillRequested: "Yoga Training",
-      dateRequested: "2025-07-09",
-      availability: "Evenings",
-      status: "accepted",
-      startedOn: "2025-07-09",
-    },
-  ],
-  completedSwaps: [
-    {
-      id: 4,
-      partnerName: "Alex Smith",
-      location: "Bangalore",
-      skillOffered: "Video Editing",
-      skillRequested: "Public Speaking",
-      dateRequested: "2025-06-01",
-      availability: "Weekends",
-      status: "completed",
-      completedOn: "2025-07-01",
-      rating: 4,
-      feedback: "Great swap experience!",
-    },
-  ],
-};
-
 const MySwaps = () => {
-  const [tab, setTab] = useState("pending"); // "pending", "ongoing", "completed"
-  const [swaps, setSwaps] = useState(initialSwaps);
+  const [tab, setTab] = useState("pending"); // pending | ongoing | completed
+  const [swaps, setSwaps] = useState({
+    incomingRequests: [],
+    outgoingRequests: [],
+    ongoingSwaps: [],
+    completedSwaps: [],
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Action Handlers
-  const acceptRequest = (id, isIncoming) => {
-    // Move swap from pending to ongoing
+  const API_BASE = "http://localhost:5000/api/swaps"; // Replace with your backend URL
+
+  // Fetch swaps from backend
+  const fetchSwaps = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(API_BASE);
+      if (!res.ok) throw new Error("Failed to fetch swaps");
+      const data = await res.json();
+      setSwaps(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSwaps();
+  }, []);
+
+  // Helper to update swap state after backend actions
+  const updateSwapsAfterAction = (updatedSwap) => {
     setSwaps((prev) => {
-      const requestsKey = isIncoming ? "incomingRequests" : "outgoingRequests";
-      const requestIndex = prev[requestsKey].findIndex((s) => s.id === id);
-      if (requestIndex === -1) return prev;
+      const removeFrom = (arr) => arr.filter((s) => s.id !== updatedSwap.id);
+      const incoming = removeFrom(prev.incomingRequests);
+      const outgoing = removeFrom(prev.outgoingRequests);
+      const ongoing = removeFrom(prev.ongoingSwaps);
+      const completed = removeFrom(prev.completedSwaps);
 
-      const acceptedSwap = {
-        ...prev[requestsKey][requestIndex],
-        status: "accepted",
-        startedOn: new Date().toISOString().slice(0, 10),
-      };
+      switch (updatedSwap.status) {
+        case "pending":
+          if (updatedSwap.isIncoming) {
+            incoming.unshift(updatedSwap);
+          } else {
+            outgoing.unshift(updatedSwap);
+          }
+          break;
+        case "accepted":
+          ongoing.unshift(updatedSwap);
+          break;
+        case "completed":
+          completed.unshift(updatedSwap);
+          break;
+        default:
+          break;
+      }
 
       return {
-        ...prev,
-        [requestsKey]: prev[requestsKey].filter((s) => s.id !== id),
-        ongoingSwaps: [acceptedSwap, ...prev.ongoingSwaps],
+        incomingRequests: incoming,
+        outgoingRequests: outgoing,
+        ongoingSwaps: ongoing,
+        completedSwaps: completed,
       };
     });
   };
 
-  const rejectRequest = (id, isIncoming) => {
-    // Remove request from pending
-    setSwaps((prev) => {
-      const requestsKey = isIncoming ? "incomingRequests" : "outgoingRequests";
-      return {
+  // Backend action calls + local update:
+  const acceptRequest = async (id, isIncoming) => {
+    try {
+      const res = await fetch(`${API_BASE}/${id}/accept`, { method: "POST" });
+      if (!res.ok) throw new Error("Accept failed");
+      const updatedSwap = await res.json();
+      updatedSwap.isIncoming = isIncoming;
+      updateSwapsAfterAction(updatedSwap);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const rejectRequest = async (id, isIncoming) => {
+    try {
+      const res = await fetch(`${API_BASE}/${id}/reject`, { method: "POST" });
+      if (!res.ok) throw new Error("Reject failed");
+      setSwaps((prev) => {
+        const key = isIncoming ? "incomingRequests" : "outgoingRequests";
+        return {
+          ...prev,
+          [key]: prev[key].filter((s) => s.id !== id),
+        };
+      });
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const cancelRequest = async (id) => {
+    try {
+      const res = await fetch(`${API_BASE}/${id}/cancel`, { method: "POST" });
+      if (!res.ok) throw new Error("Cancel failed");
+      setSwaps((prev) => ({
         ...prev,
-        [requestsKey]: prev[requestsKey].filter((s) => s.id !== id),
-      };
-    });
+        outgoingRequests: prev.outgoingRequests.filter((s) => s.id !== id),
+      }));
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
-  const cancelRequest = (id) => {
-    // Remove from outgoingRequests
-    setSwaps((prev) => ({
-      ...prev,
-      outgoingRequests: prev.outgoingRequests.filter((s) => s.id !== id),
-    }));
+  const markCompleted = async (id) => {
+    try {
+      const res = await fetch(`${API_BASE}/${id}/complete`, { method: "POST" });
+      if (!res.ok) throw new Error("Mark complete failed");
+      const updatedSwap = await res.json();
+      updateSwapsAfterAction(updatedSwap);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
-  const markCompleted = (id) => {
-    setSwaps((prev) => {
-      const ongoingIndex = prev.ongoingSwaps.findIndex((s) => s.id === id);
-      if (ongoingIndex === -1) return prev;
+  const leaveFeedback = async (id) => {
+    const rating = prompt("Rate this swap (1-5):");
+    const feedback = prompt("Leave your feedback:");
 
-      const completedSwap = {
-        ...prev.ongoingSwaps[ongoingIndex],
-        status: "completed",
-        completedOn: new Date().toISOString().slice(0, 10),
-      };
+    if (!rating || !feedback) return;
 
-      return {
-        ...prev,
-        ongoingSwaps: prev.ongoingSwaps.filter((s) => s.id !== id),
-        completedSwaps: [completedSwap, ...prev.completedSwaps],
-      };
-    });
-  };
-
-  const leaveFeedback = (id) => {
-    alert(`Open feedback form for swap id: ${id}`);
-    // You can implement modal form here
+    try {
+      const res = await fetch(`${API_BASE}/${id}/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ rating, feedback }),
+      });
+      if (!res.ok) throw new Error("Feedback submission failed");
+      const updatedSwap = await res.json();
+      updateSwapsAfterAction(updatedSwap);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-black text-white">
       <Navbar />
       <div className="flex flex-1">
         <Sidebar />
 
-        <main className="flex-1 bg-gradient-to-br from-blue-50 to-purple-100 p-8 max-w-5xl mx-auto text-gray-800 overflow-auto">
-          <h1 className="text-4xl font-bold mb-2 text-purple-700">My Swaps</h1>
-          <p className="mb-8 text-gray-600">
+        <main
+          className="flex-1 p-8 max-w-5xl mx-auto mt-28 ml-72 overflow-auto bg-gray-900 rounded-2xl shadow-inner"
+          style={{ minHeight: "calc(100vh - 7rem)" }}
+        >
+          <h1 className="text-4xl font-bold mb-2 text-purple-500">My Swaps</h1>
+          <p className="mb-8 text-purple-300">
             Manage your swap requests, ongoing swaps, and completed activities here.
           </p>
 
-          {/* Tabs */}
-          <div className="flex gap-6 mb-10 border-b border-gray-300">
-            <button
-              className={`pb-3 font-semibold ${
-                tab === "pending"
-                  ? "border-b-4 border-purple-700 text-purple-700"
-                  : "text-gray-600 hover:text-purple-700"
-              }`}
-              onClick={() => setTab("pending")}
-            >
-              📨 Pending Requests
-            </button>
-            <button
-              className={`pb-3 font-semibold ${
-                tab === "ongoing"
-                  ? "border-b-4 border-purple-700 text-purple-700"
-                  : "text-gray-600 hover:text-purple-700"
-              }`}
-              onClick={() => setTab("ongoing")}
-            >
-              🔄 Ongoing Swaps
-            </button>
-            <button
-              className={`pb-3 font-semibold ${
-                tab === "completed"
-                  ? "border-b-4 border-purple-700 text-purple-700"
-                  : "text-gray-600 hover:text-purple-700"
-              }`}
-              onClick={() => setTab("completed")}
-            >
-              📜 Completed Swaps
-            </button>
-          </div>
+          {loading && <p>Loading swaps...</p>}
+          {error && <p className="text-red-500">Error: {error}</p>}
 
-          {/* Tab Content */}
-          {tab === "pending" && (
+          {!loading && !error && (
             <>
-              <h2 className="text-2xl font-semibold mb-4 text-purple-700">Incoming Requests</h2>
-              <SwapList
-                swaps={swaps.incomingRequests}
-                type="incoming"
-                onAccept={(id) => acceptRequest(id, true)}
-                onReject={(id) => rejectRequest(id, true)}
-                emptyMessage="You have no incoming swap requests. Browse skills to find partners!"
-              />
+              {/* Tabs */}
+              <div className="flex gap-6 mb-10 border-b border-gray-700">
+                <button
+                  className={`pb-3 font-semibold ${
+                    tab === "pending"
+                      ? "border-b-4 border-purple-500 text-purple-500"
+                      : "text-purple-300 hover:text-purple-500"
+                  }`}
+                  onClick={() => setTab("pending")}
+                >
+                  📨 Pending Requests
+                </button>
+                <button
+                  className={`pb-3 font-semibold ${
+                    tab === "ongoing"
+                      ? "border-b-4 border-purple-500 text-purple-500"
+                      : "text-purple-300 hover:text-purple-500"
+                  }`}
+                  onClick={() => setTab("ongoing")}
+                >
+                  🔄 Ongoing Swaps
+                </button>
+                <button
+                  className={`pb-3 font-semibold ${
+                    tab === "completed"
+                      ? "border-b-4 border-purple-500 text-purple-500"
+                      : "text-purple-300 hover:text-purple-500"
+                  }`}
+                  onClick={() => setTab("completed")}
+                >
+                  📜 Completed Swaps
+                </button>
+              </div>
 
-              <h2 className="text-2xl font-semibold mt-10 mb-4 text-purple-700">Outgoing Requests</h2>
-              <SwapList
-                swaps={swaps.outgoingRequests}
-                type="outgoing"
-                onCancel={cancelRequest}
-                emptyMessage="You have no outgoing swap requests."
-              />
+              {/* Tab Content */}
+              {tab === "pending" && (
+                <>
+                  <h2 className="text-2xl font-semibold mb-4 text-purple-500">Incoming Requests</h2>
+                  <SwapList
+                    swaps={swaps.incomingRequests}
+                    type="incoming"
+                    onAccept={(id) => acceptRequest(id, true)}
+                    onReject={(id) => rejectRequest(id, true)}
+                    emptyMessage="You have no incoming swap requests. Browse skills to find partners!"
+                  />
+
+                  <h2 className="text-2xl font-semibold mt-10 mb-4 text-purple-500">Outgoing Requests</h2>
+                  <SwapList
+                    swaps={swaps.outgoingRequests}
+                    type="outgoing"
+                    onCancel={cancelRequest}
+                    emptyMessage="You have no outgoing swap requests."
+                  />
+                </>
+              )}
+
+              {tab === "ongoing" && (
+                <SwapList
+                  swaps={swaps.ongoingSwaps}
+                  type="ongoing"
+                  onMarkComplete={markCompleted}
+                  emptyMessage="No ongoing swaps at the moment. Accept or request swaps to get started!"
+                />
+              )}
+
+              {tab === "completed" && (
+                <SwapList
+                  swaps={swaps.completedSwaps}
+                  type="completed"
+                  onLeaveFeedback={leaveFeedback}
+                  emptyMessage="Your completed swaps will show up here."
+                />
+              )}
             </>
-          )}
-
-          {tab === "ongoing" && (
-            <SwapList
-              swaps={swaps.ongoingSwaps}
-              type="ongoing"
-              onMarkComplete={markCompleted}
-              emptyMessage="No ongoing swaps at the moment. Accept or request swaps to get started!"
-            />
-          )}
-
-          {tab === "completed" && (
-            <SwapList
-              swaps={swaps.completedSwaps}
-              type="completed"
-              onLeaveFeedback={leaveFeedback}
-              emptyMessage="Your completed swaps will show up here."
-            />
           )}
         </main>
       </div>

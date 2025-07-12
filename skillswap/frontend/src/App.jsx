@@ -5,7 +5,8 @@ import Navbar from "./components/layout/Navbar";
 import LandingPage from "./components/LandingPage";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
-
+import Settings from "./pages/settings";
+import Notifications from "./pages/notification";
 import Home from "./pages/Home";
 import BrowseSkills from "./components/BrowseSkills";
 import Browse from "./pages/Browse";
@@ -40,7 +41,8 @@ function App() {
           {/* Profile routes */}
           <Route path="/profile" element={<OwnProfile />} />        {/* own logged-in user profile */}
           <Route path="/profile/:id" element={<Profile />} />       {/* other user's public profile */}
-
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/notifications" element={<Notifications />} />
           {/* Catch-all 404 */}
           <Route path="*" element={<h2 className="p-6 text-2xl">404 - Page Not Found</h2>} />
         </Routes>
